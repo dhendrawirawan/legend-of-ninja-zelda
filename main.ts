@@ -275,7 +275,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         ........................
         `],
     35,
-    true
+    false
     )
     mySprite.setImage(img`
         . . . . . . . . . . . . . . . . 
@@ -319,12 +319,14 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.stairSouth, function (spr
     scene.cameraFollowSprite(mySprite)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    Damaged = 1
     mySprite.setKind(SpriteKind.DamagedPlayer)
     controller.moveSprite(mySprite, 0, 0)
     sprite.setVelocity((sprite.x - otherSprite.x) * 5, (sprite.y - otherSprite.y) * 5)
     info.changeLifeBy(-1)
 })
 let Enemy_Projectile: Sprite = null
+let Damaged = 0
 let Enemy3_Active = 0
 let Enemy2_Active = 0
 let Enemy4_Active = 0
@@ -616,32 +618,6 @@ game.onUpdateInterval(25, function () {
     }
 })
 game.onUpdateInterval(1000, function () {
-    animation.stopAnimation(animation.AnimationTypes.All, mySprite)
-    mySprite.setImage(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f f e 2 2 2 2 2 2 e e f . . 
-        . . f e 2 f f f f f f 2 e f . . 
-        . . f f f f e e e e f f f f . . 
-        . f f e f b f 4 4 f b f e f f . 
-        . f e e 4 1 f d d f 1 4 e e f . 
-        . . f f f f d d d d d e e f . . 
-        . f d d d d f 4 4 4 e e f . . . 
-        . f b b b b f 2 2 2 2 f 4 e . . 
-        . f b b b b f 2 2 2 2 f d 4 . . 
-        . . f c c f 4 5 5 4 4 f 4 4 . . 
-        . . . f f f f f f f f . . . . . 
-        . . . . . f f . . f f . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `)
-    mySprite.setKind(SpriteKind.Player)
-    Attacking = 0
-    controller.moveSprite(mySprite, 100, 100)
-})
-game.onUpdateInterval(500, function () {
     if (Enemy3_Active == 1 && Enemy3.vx == 0) {
         Enemy_Projectile = sprites.createProjectileFromSprite(img`
             . . . . . . . . . . . . . . . . 
@@ -669,5 +645,35 @@ game.onUpdateInterval(500, function () {
         Enemy4.changeScale(0.5, ScaleAnchor.BottomRight)
     } else {
     	
+    }
+})
+game.onUpdateInterval(100, function () {
+    if (Attacking <= 0 && Damaged <= 0) {
+        animation.stopAnimation(animation.AnimationTypes.All, mySprite)
+        mySprite.setImage(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 2 2 f f f . . . . 
+            . . . f f f 2 2 2 2 f f f . . . 
+            . . f f f e e e e e e f f f . . 
+            . . f f e 2 2 2 2 2 2 e e f . . 
+            . . f e 2 f f f f f f 2 e f . . 
+            . . f f f f e e e e f f f f . . 
+            . f f e f b f 4 4 f b f e f f . 
+            . f e e 4 1 f d d f 1 4 e e f . 
+            . . f f f f d d d d d e e f . . 
+            . f d d d d f 4 4 4 e e f . . . 
+            . f b b b b f 2 2 2 2 f 4 e . . 
+            . f b b b b f 2 2 2 2 f d 4 . . 
+            . . f c c f 4 5 5 4 4 f 4 4 . . 
+            . . . f f f f f f f f . . . . . 
+            . . . . . f f . . f f . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `)
+        mySprite.setKind(SpriteKind.Player)
+        controller.moveSprite(mySprite, 100, 100)
+    } else {
+        Attacking = Attacking - 0.1
+        Damaged = Damaged - 0.1
     }
 })
